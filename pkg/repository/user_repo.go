@@ -89,7 +89,7 @@ func (r *User_repo) GetAllUsers(limit int, offset int) (int, []models.User, erro
 
 	//Выбираем людей
 	var users []models.User
-	query := "SELECT * FROM users LIMIT $1 OFFSET $2"
+	query := fmt.Sprintf("SELECT * FROM %s LIMIT $1 OFFSET $2", usersTable)
 	err = r.db.Select(&users, query, limit, offset)
 	if err != nil {
 		return -1, nil, err
@@ -104,10 +104,7 @@ func (r *User_repo) GetCertainUsers(limit int, offset int, filter map[string]str
 
 	// Базовый запрос
 	// 1=1 для более удобного формирования конструкции с фильтром
-	query := `
-        SELECT * FROM users
-        WHERE 1=1
-    `
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE 1=1`, usersTable)
 	//Узнаём, какие фильтры будут добавляться и формируем запрос в бд
 	for key, value := range filter {
 		query += fmt.Sprintf(" AND %s = '%s'", key, value)
@@ -138,7 +135,7 @@ func (r *User_repo) GetCertainUsers(limit int, offset int, filter map[string]str
 
 func (r *User_repo) DeleteUser(userId int) error {
 
-	_, err := r.db.Exec("DELETE FROM users WHERE id = $1", userId)
+	_, err := r.db.Exec(fmt.Sprintf("DELETE FROM %s WHERE id = $1", usersTable), userId)
 	//В бд ID удаляется, но список остаётся без смещения
 	// ID	Name ...
 	// 11	ivan ...
