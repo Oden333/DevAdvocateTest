@@ -14,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -22,8 +23,13 @@ func main() {
 	logrus.SetLevel(logrus.DebugLevel)
 
 	//Инициализируем конфиг данных через енв переменные
+	/*
+		if err := initConfig(); err != nil {
+			logrus.Fatalf("error initializing configs: %s", err.Error())
+		}
+	*/
 	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("unable to get pswd (%s)", err.Error())
+		logrus.Fatalf("unable to open get env variables (%s)", err.Error())
 	}
 	//Инициализируем БД
 	db, err := repository.NewPostgresDB(repository.Config{
@@ -33,6 +39,14 @@ func main() {
 		Password: os.Getenv("DB_PASSWORD"),
 		DBName:   os.Getenv("DB_DBNAME"),
 		SSLMode:  os.Getenv("DB_SSLMODE"),
+		/*
+			Host:     viper.GetString("db.host"),
+			Port:     viper.GetString("db.port"),
+			Username: viper.GetString("db.username"),
+			Password: viper.GetString("db.password"),
+			DBName:   viper.GetString("db.dbname"),
+			SSLMode:  viper.GetString("db.sslmode"),
+		*/
 	})
 	if err != nil {
 		logrus.Fatalf("Failed to initialize db (%s)", err.Error())
@@ -64,4 +78,10 @@ func main() {
 	if err := db.Close(); err != nil {
 		logrus.Errorf("Error occured on db while closing (%s)", err.Error())
 	}
+}
+
+func initConfig() error {
+	viper.AddConfigPath("configs")
+	viper.SetConfigName("config")
+	return viper.ReadInConfig()
 }
