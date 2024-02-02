@@ -1,7 +1,9 @@
 version: "3.9"
 services:
   postgres:
-    image: postgresql
+    image: postgres
+    environment:
+      - name=value
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=qwerty
       - POSTGRES_DB=users
@@ -12,5 +14,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DB_HOST=postgresql
+      - DB_HOST=postgres
       - DB_PORT=5432
+    depends_on:
+      - postgres
+    entrypoint: ["/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh"]
+    command: ["/app/main"]

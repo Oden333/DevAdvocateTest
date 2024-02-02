@@ -29,7 +29,7 @@ func (h *Handler) create_user(c *gin.Context) {
 
 	id, err := h.services.UserService.CreateUser(input)
 	if err != nil {
-		logrus.Debug("error while creating user", err)
+		logrus.Debug("Error while creating user", err)
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
