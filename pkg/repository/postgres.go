@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	usersTable = "users"
+	usersTable = "users_table"
 )
 
 type Config struct {
@@ -24,10 +24,9 @@ func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 	db, err := sqlx.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode))
 	if err != nil {
-		logrus.Debug("Con str:", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+		logrus.Debug("Connection string:", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 			cfg.Host, cfg.Port, cfg.Username, cfg.DBName, cfg.Password, cfg.SSLMode))
 		return nil, err
-
 	}
 	err = db.Ping()
 	if err != nil {
